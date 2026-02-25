@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spatial-Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex flex-col h-screen w-full overflow-hidden bg-[#0a0a0a] text-[#eeeeee] font-sans antialiased">
+
+    <header class="flex justify-between items-center px-8 py-5 bg-[#0a0a0a] border-b border-[#1a1a1a]">
+        <div class="text-2xl font-black tracking-tighter text-white">SPATIAL</div>
+        
+        <nav class="hidden md:flex space-x-8 text-[12px] text-gray-400 font-medium">
+            <a href="#" class="hover:text-white transition-colors duration-300">Overview</a>
+            <a href="#" class="hover:text-white transition-colors duration-300">Effects</a>
+            <a href="#" class="hover:text-white transition-colors duration-300">Features</a>
+            <a href="#" class="hover:text-white transition-colors duration-300">Pricing</a>
+            <span class="text-[#333]">|</span>
+            <a href="#" class="hover:text-white transition-colors duration-300">Help</a>
+        </nav>
+
+        <div class="flex items-center gap-4">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-gray-500 mr-4">
+                Total Detections: <span id="detectionCounter" class="text-white">0</span>
+            </div>
+            <button id="topRightLiveBtn" class="rounded-full border border-[#333] px-5 py-2 text-[10px] font-bold tracking-widest btn-outline">
+                LIVE FEED
+            </button>
+            <button id="resetBtn" class="rounded-full bg-white text-black px-5 py-2 text-[10px] font-bold tracking-widest hover:bg-gray-200 transition-colors">
+                RESET SYSTEM
+            </button>
+        </div>
+    </header>
+
+    <div class="flex flex-1 h-full overflow-hidden">
+        <main class="flex-1 relative flex flex-col items-center justify-center bg-[#111111] p-8">
+            
+            <div class="absolute top-6 left-6 flex border border-[#222] rounded-full overflow-hidden z-10 bg-[#0a0a0a]">
+                <button id="liveFeedViewBtn" class="px-6 py-2 text-[10px] font-bold tracking-widest btn-toggle">LIVE FEED</button>
+                <button id="lastKnownViewBtn" class="px-6 py-2 text-[10px] font-bold tracking-widest border-l border-[#222] btn-toggle">LAST KNOWN LOCATION</button>
+            </div>
+
+            <div class="w-full max-w-5xl aspect-video bg-black relative flex items-center justify-center overflow-hidden shadow-2xl">
+                <div id="naDisplay" class="text-[#444] text-sm tracking-widest uppercase font-bold hidden">Awaiting Feed</div>
+                
+                <div id="workspaceContainer" class="hidden w-full h-full relative">
+                    <video id="liveVideo" autoplay playsinline muted class="hidden w-full h-full object-cover"></video>
+                    
+                    <img id="workspaceImage" src="" class="hidden w-full h-full object-cover">
+                    
+                    <div id="boundingBox" class="absolute border border-blue-500 bg-blue-500/10 pointer-events-none hidden transition-all duration-200">
+                        <div id="boxLabel" class="absolute -top-6 left-[-1px] bg-blue-500 px-2 py-1 text-[10px] text-white font-bold uppercase tracking-wider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="timelineContainer" class="w-full max-w-5xl mt-4 hidden flex items-center gap-4 bg-[#0a0a0a] p-4 border border-[#222] rounded-md shadow-lg">
+                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Timeline</span>
+                <input type="range" id="timeScrubber" class="flex-1 accent-blue-500 h-1 bg-[#222] rounded-lg appearance-none cursor-pointer" min="0" max="0" value="0">
+                <span id="scrubberLabel" class="text-[10px] text-blue-500 font-bold tracking-widest min-w-[120px] text-right">LATEST</span>
+            </div>
+
+            <div id="actionButtons" class="mt-4 flex justify-end w-full max-w-5xl hidden">
+                <button class="rounded-full border border-[#333] px-8 py-3 text-[10px] font-bold tracking-widest flex items-center gap-2 btn-outline hover:bg-[#1a1a1a]">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    EXPORT
+                </button>
+            </div>
+        </main>
+
+        <aside class="w-[300px] bg-[#0a0a0a] border-l border-[#1a1a1a] flex flex-col z-10">
+            <div class="p-4 border-b border-[#1a1a1a] flex flex-col gap-3">
+                <input type="text" id="searchInput" 
+                    class="w-full bg-[#111111] border border-[#222] text-white text-[11px] px-3 py-2 focus:outline-none focus:border-[#444] transition-colors duration-300 rounded-sm"
+                    placeholder="Filter Catalogued Items...">
+                
+                <div class="flex gap-2">
+                    <input type="text" id="dateFilter" 
+                        placeholder="Date (e.g. 2026)"
+                        class="w-1/2 bg-[#111111] border border-[#222] text-white text-[10px] px-2 py-2 focus:outline-none focus:border-[#444] placeholder-[#444] transition-colors duration-300 rounded-sm">
+                    <input type="text" id="timeFilter" 
+                        placeholder="Time (e.g. 14:)"
+                        class="w-1/2 bg-[#111111] border border-[#222] text-white text-[10px] px-2 py-2 focus:outline-none focus:border-[#444] placeholder-[#444] transition-colors duration-300 rounded-sm">
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto sidebar-scroll">
+                <ul id="catalogList" class="flex flex-col">
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
