@@ -52,20 +52,41 @@ def get_db():
     finally:
         db.close()
 
-model = YOLO("yolov8n.pt")
-cap = cv2.VideoCapture(0)
+model = YOLO("best.pt") # Ensure this is your custom trained model
+
+# --- VIDEO CAPTURE SETUP ---
+VIDEO_PATH = "demo.mp4" # CHANGE THIS TO YOUR EXACT VIDEO FILE NAME
+cap = cv2.VideoCapture(VIDEO_PATH)
+latest_frame = None
+
+def capture_loop():
+    global latest_frame
+    fps = cap.get(cv2.CAP_PROP_FPS) or 30
+    delay = 1 / fps
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            # Video ended, loop back to the beginning
+            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            continue
+        latest_frame = frame.copy()
+        time.sleep(delay) # Keep video playing at normal speed
+
+threading.Thread(target=capture_loop, daemon=True).start()
 
 def detection_loop():
     db = SessionLocal()
     while True:
-        ret, frame = cap.read()
-        if ret:
-            results = model(frame, verbose=False)
+        if latest_frame is not None:
+            # Pass a copy to YOLO to avoid threading conflicts
+            frame_to_process = latest_frame.copy() 
+            results = model(frame_to_process, verbose=False)
+            
             if len(results[0].boxes) > 0:
                 ts = int(time.time())
                 fname = f"snap_{ts}.jpg"
                 filepath = os.path.join(UPLOAD_DIR, fname)
-                cv2.imwrite(filepath, frame)
+                cv2.imwrite(filepath, frame_to_process)
                 
                 for box in results[0].boxes:
                     label = model.names[int(box.cls[0])].title()
@@ -86,19 +107,16 @@ def detection_loop():
                     )
                     db.add(new_entry)
                 db.commit()
-        time.sleep(10)
+        time.sleep(10) # Run detection every 10 seconds
 
 threading.Thread(target=detection_loop, daemon=True).start()
 
 def generate_frames():
     while True:
-        success, frame = cap.read()
-        if not success:
-            break
-        else:
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        if latest_frame is not None:
+            ret, buffer = cv2.imencode('.jpg', latest_frame)
+            yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+        time.sleep(0.05)
 
 @app.get("/api/stream")
 def video_feed():
@@ -115,7 +133,7 @@ def get_data(db: Session = Depends(get_db)):
             grouped_data[name] = {"name": name, "history": []}
         
         dt = log.timestamp
-        time_str = dt.strftime("%H:%M")
+        time_str = dt.strftime("%H:%M:%S")
         date_str = dt.strftime("%Y-%m-%d")
         
         grouped_data[name]["history"].append({
