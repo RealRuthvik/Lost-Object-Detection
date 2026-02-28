@@ -1,12 +1,8 @@
 # **Spatial Search**
 
-**Our**
+**Demo Video:** [Watch on YouTube](https://www.youtube.com/watch?v=EHRICfNJwWk)
 
-**https://www.youtube.com/watch?v=EHRICfNJwWk**
-
-**Model File ([model.pt](http://model.pt)):**
-
-**https://drive.google.com/file/d/12F9kFGWU75lp0WYr6F8ijPwvAB34KtTE/view**
+**Model File (model.pt):** [Download from Google Drive](https://drive.google.com/file/d/12F9kFGWU75lp0WYr6F8ijPwvAB34KtTE/view)
 
 ## **Overview**
 
@@ -28,24 +24,26 @@ This project is a computer vision application that tracks and catalogs objects o
 
 ## **Setup and Installation**
 
-1. **Clone the repository:**  
-   git clone https://github.com/RealRuthvik/Lost-Object-Detection
+1. **Clone the repository:**
+
+git clone \[https://github.com/RealRuthvik/Lost-Object-Detection\](https://github.com/RealRuthvik/Lost-Object-Detection)
 
 2. **Install dependencies:**  
-   Ensure you have Python installed. Install the required packages:  
-   pip install fastapi uvicorn opencv-python ultralytics sqlalchemy
+   Ensure you have Python installed. Install the required packages:
+
+pip install fastapi uvicorn opencv-python ultralytics sqlalchemy
 
 3. **Download required assets:**  
-   * Download the model.pt file from the Google Drive link above.  
-   * Place model.pt in the root directory of the project.  
-   * Add a demo video file named demo.mp4 from https://drive.google.com/drive/folders/1ohFCQBKuIucftmpY3E44RqKcELh7SHiz in root directory.  
+* Download the model.pt file from the [Google Drive link](https://drive.google.com/file/d/12F9kFGWU75lp0WYr6F8ijPwvAB34KtTE/view).  
+* Place model.pt in the root directory of the project.  
+* Add a demo video file named demo.mp4 from [this Google Drive folder](https://drive.google.com/drive/folders/1ohFCQBKuIucftmpY3E44RqKcELh7SHiz) to the root directory.  
 4. **Run the server:**  
-   Start the FastAPI application using Uvicorn.  
-   uvicorn server:app \--host 127.0.0.1 \--port 8000 \--reload
+   Start the FastAPI application using Uvicorn.
+
+uvicorn server:app \--host 127.0.0.1 \--port 8000 \--reload
 
 5. **Access the dashboard:**  
-   Open a web browser and navigate to:  
-   \[http://127.0.0.1:8000/\](http://127.0.0.1:8000/)
+   Open a web browser and navigate to: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ## **Configuration**
 
