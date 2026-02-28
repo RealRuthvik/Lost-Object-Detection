@@ -13,6 +13,10 @@
         <div class="text-2xl font-black tracking-tighter text-white">DevDash Demo</div>
 
         <div class="flex items-center gap-4">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-blue-500 mr-4 border border-blue-900 bg-blue-900/20 px-3 py-1 rounded-sm">
+                Next Scan In: <span id="scanTimer">10</span>
+            </div>
+            
             <div class="text-[10px] font-bold uppercase tracking-widest text-gray-500 mr-4">
                 Total Detections: <span id="detectionCounter" class="text-white">0</span>
             </div>
@@ -27,14 +31,17 @@
     </header>
 
     <div class="flex flex-1 h-full overflow-hidden">
-        <main class="flex-1 relative flex flex-col items-center justify-center bg-[#111111] p-8">
+        <main class="flex-1 flex flex-col items-center justify-center bg-[#111111] p-8">
             
-            <div class="absolute top-6 left-6 flex border border-[#222] rounded-full overflow-hidden z-10 bg-[#0a0a0a]">
-                <button id="liveFeedViewBtn" class="px-6 py-2 text-[10px] font-bold tracking-widest btn-toggle">LIVE FEED</button>
-                <button id="lastKnownViewBtn" class="px-6 py-2 text-[10px] font-bold tracking-widest border-l border-[#222] btn-toggle">LAST KNOWN LOCATION</button>
+            <div class="w-full max-w-5xl mb-4 flex justify-start z-10">
+                <div class="flex border border-[#222] rounded-full overflow-hidden bg-[#0a0a0a]">
+                    <button id="liveFeedViewBtn" class="px-6 py-2 text-[10px] font-bold tracking-widest btn-toggle">LIVE FEED</button>
+                    <button id="lastKnownViewBtn" class="px-6 py-2 text-[10px] font-bold tracking-widest border-l border-[#222] btn-toggle">LAST KNOWN LOCATION</button>
+                    <button id="toggleBoxesBtn" class="px-6 py-2 text-[10px] font-bold tracking-widest border-l border-[#222] btn-toggle">BOXES: OFF</button>
+                </div>
             </div>
 
-            <div class="w-full max-w-5xl aspect-video bg-black relative flex items-center justify-center overflow-hidden shadow-2xl">
+            <div class="w-full max-w-5xl aspect-video bg-black relative flex items-center justify-center overflow-hidden shadow-2xl rounded-sm">
                 <div id="naDisplay" class="text-[#444] text-sm tracking-widest uppercase font-bold hidden">Awaiting Feed</div>
                 
                 <div id="workspaceContainer" class="hidden w-full h-full relative">
@@ -42,8 +49,8 @@
                     
                     <img id="workspaceImage" src="" class="hidden w-full h-full object-cover">
                     
-                    <div id="boundingBox" class="absolute border border-blue-500 bg-blue-500/10 pointer-events-none hidden transition-all duration-200">
-                        <div id="boxLabel" class="absolute -top-6 left-[-1px] bg-blue-500 px-2 py-1 text-[10px] text-white font-bold uppercase tracking-wider"></div>
+                    <div id="boundingBox" class="absolute border-2 border-blue-500 bg-blue-500/10 pointer-events-none hidden transition-all duration-200">
+                        <div id="boxLabel" class="absolute -top-6 left-[-2px] bg-blue-500 px-2 py-1 text-[10px] text-white font-bold uppercase tracking-wider"></div>
                     </div>
                 </div>
             </div>
@@ -52,13 +59,6 @@
                 <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Timeline</span>
                 <input type="range" id="timeScrubber" class="flex-1 accent-blue-500 h-1 bg-[#222] rounded-lg appearance-none cursor-pointer" min="0" max="0" value="0">
                 <span id="scrubberLabel" class="text-[10px] text-blue-500 font-bold tracking-widest min-w-[120px] text-right">LATEST</span>
-            </div>
-
-            <div id="actionButtons" class="mt-4 flex justify-end w-full max-w-5xl hidden">
-                <button class="rounded-full border border-[#333] px-8 py-3 text-[10px] font-bold tracking-widest flex items-center gap-2 btn-outline hover:bg-[#1a1a1a]">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    EXPORT
-                </button>
             </div>
         </main>
 
